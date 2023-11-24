@@ -28,10 +28,10 @@ class Rook(Figure):
             return []
         return sorted(available_moves)
 
-    def validate_move(self, dest_field: str) -> bool:
+    def validate_move(self, dest_field: str) -> str:
         if self.chessboard.check_if_field_in_chessboard(dest_field):
             if dest_field.upper() in self.available_moves:
-                return True
+                return "Field available"
             else:
                 return "Field not available."
         else:
