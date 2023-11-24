@@ -9,7 +9,7 @@ class Queen(Figure):
         self.chessboard = Chessboard()
         self.available_moves = self.list_available_moves()
 
-    def list_available_moves(self):
+    def list_available_moves(self) -> list:
         available_moves = []
         if self.current_field in self.chessboard.fields:
             directions = [
