@@ -30,16 +30,14 @@ class Bishop(Figure):
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if self.chessboard.check_if_field_in_chessboard(self.current_field):
-            if self.chessboard.check_if_field_in_chessboard(dest_field):
-                if dest_field.upper() in self.list_available_moves():
-                    return True
-                else:
-                    raise ValueError("current move is not permitted")
-            else:
-                raise ValueError("destination field does not exist")
-        else:
+        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
+        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+            raise ValueError("destination field does not exist")
+        if not dest_field.upper() in self.list_available_moves():
+            raise ValueError("current move is not permitted")
+        else:
+            return True
 
 
 class King(Figure):
@@ -72,16 +70,14 @@ class King(Figure):
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if self.chessboard.check_if_field_in_chessboard(self.current_field):
-            if self.chessboard.check_if_field_in_chessboard(dest_field):
-                if dest_field.upper() in self.list_available_moves():
-                    return True
-                else:
-                    raise ValueError("current move is not permitted")
-            else:
-                raise ValueError("destination field does not exist")
-        else:
+        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
+        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+            raise ValueError("destination field does not exist")
+        if not dest_field.upper() in self.list_available_moves():
+            raise ValueError("current move is not permitted")
+        else:
+            return True
 
 
 class Knight(Figure):
@@ -140,17 +136,14 @@ class Knight(Figure):
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if self.chessboard.check_if_field_in_chessboard(self.current_field):
-            if self.chessboard.check_if_field_in_chessboard(dest_field):
-                if dest_field.upper() in self.list_available_moves():
-                    return True
-                else:
-                    raise ValueError("current move is not permitted")
-            else:
-                raise ValueError("destination field does not exist")
-        else:
+        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
-
+        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+            raise ValueError("destination field does not exist")
+        if not dest_field.upper() in self.list_available_moves():
+            raise ValueError("current move is not permitted")
+        else:
+            return True
 
 class Pawn(Figure):
     def __init__(self, current_field: str):
@@ -300,16 +293,14 @@ class Queen(Figure):
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if self.chessboard.check_if_field_in_chessboard(self.current_field):
-            if self.chessboard.check_if_field_in_chessboard(dest_field):
-                if dest_field.upper() in self.list_available_moves():
-                    return True
-                else:
-                    raise ValueError("current move is not permitted")
-            else:
-                raise ValueError("destination field does not exist")
-        else:
+        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
+        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+            raise ValueError("destination field does not exist")
+        if not dest_field.upper() in self.list_available_moves():
+            raise ValueError("current move is not permitted")
+        else:
+            return True
 
 
 class Rook(Figure):
@@ -340,13 +331,14 @@ class Rook(Figure):
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if self.chessboard.check_if_field_in_chessboard(self.current_field):
-            if self.chessboard.check_if_field_in_chessboard(dest_field):
-                if dest_field.upper() in self.list_available_moves():
-                    return True
-                else:
-                    raise ValueError("current move is not permitted")
-            else:
-                raise ValueError("destination field does not exist")
-        else:
+        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
+        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+            raise ValueError("destination field does not exist")
+        if not dest_field.upper() in self.list_available_moves():
+            raise ValueError("current move is not permitted")
+        else:
+            return True
+
+
+
