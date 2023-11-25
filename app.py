@@ -115,6 +115,79 @@ def get_list_available_moves(chess_figure: str, current_field: str):
         return get_figure_response(chess_figure, current_field, available_moves)
 
 
+@app.route("/api/v1/<chess_figure>/<current_field>/<dest_field>", methods=["GET"])
+def validate_move(chess_figure: str, current_field: str, dest_field: str):
+    figure_classes = {
+        "bishop": Bishop,
+        "king": King,
+        "knight": Knight,
+        "pawn": Pawn,
+        "queen": Queen,
+        "rook": Rook,
+    }
+
+    figure_class = figure_classes.get(chess_figure.lower())
+    if not figure_class:
+        return (
+            jsonify(
+                {
+                    "move": "invalid",
+                    "figure": chess_figure,
+                    "error": "invalid figure",
+                    "currentField": current_field,
+                    "destField": dest_field
+                }
+            ),
+            404,
+        )
+    figure_instance = figure_class(current_field)
+
+    if chess_figure.lower() == "rook":
+        try:
+            figure_instance.validate_move(dest_field)
+        except ValueError as e:
+            if str(e) == "current move is not permitted":
+                return (
+                    jsonify(
+                        {
+                            "move": "invalid",
+                            "figure": chess_figure,
+                            "error": str(e),
+                            "currentField": current_field,
+                            "destField": dest_field
+                        }
+                    ),
+                    200,
+                )
+            else:
+                return (
+                    jsonify(
+                        {
+                            "move": "invalid",
+                            "figure": chess_figure,
+                            "error": str(e),
+                            "currentField": current_field,
+                            "destField": dest_field
+                        }
+                    ),
+                    409)
+        else:
+            return (
+                jsonify(
+                    {
+                        "move": "valid",
+                        "figure": chess_figure,
+                        "error": None,
+                        "currentField": current_field,
+                        "destField": dest_field
+                    }
+                ),
+                200,
+            )
+    else:
+        pass
+
+
 @app.errorhandler(500)
 def handle_internal_server_error_500(e):
     return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
