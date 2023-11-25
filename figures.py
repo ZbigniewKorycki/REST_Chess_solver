@@ -207,17 +207,65 @@ class Pawn(Figure):
             return [{"whites": []}]
         return available_moves
 
-    def validate_move(self, dest_field: str) -> bool:
-        if self.chessboard.check_if_field_in_chessboard(self.current_field):
-            if self.chessboard.check_if_field_in_chessboard(dest_field):
-                if dest_field.upper() in self.list_available_moves():
-                    return True
-                else:
-                    raise ValueError("current move is not permitted")
-            else:
-                raise ValueError("destination field does not exist")
-        else:
+    def validate_move(self, dest_field: str) -> tuple:
+        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
+        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+            raise ValueError("destination field does not exist")
+        available_moves = self.list_available_moves()[0]
+        blacks_moves = available_moves.get("blacks", [])
+        whites_moves = available_moves.get("whites", [])
+
+        is_valid = False
+        validity_move_info = {"forWhites": "", "forBlacks": ""}
+        error_message = {"forWhites": None, "forBlacks": None}
+
+        if "blacks" not in available_moves:
+            is_valid = False
+            validity_move_info = {"forWhites": "invalid", "forBlacks": "invalid"}
+            error_message = {
+                "forWhites": "end of chessboard",
+                "forBlacks": "invalid starting position",
+            }
+        elif "whites" not in available_moves:
+            is_valid = False
+            validity_move_info = {"forWhites": "invalid", "forBlacks": "invalid"}
+            error_message = {
+                "forWhites": "invalid starting position",
+                "forBlacks": "end of chessboard",
+            }
+        elif (
+            dest_field.upper() in blacks_moves
+            and dest_field.upper() not in whites_moves
+        ):
+            is_valid = True
+            validity_move_info = {"forWhites": "invalid", "forBlacks": "valid"}
+            error_message = {
+                "forWhites": "current move is not permitted",
+                "forBlacks": None,
+            }
+        elif (
+            dest_field.upper() in whites_moves
+            and dest_field.upper() not in blacks_moves
+        ):
+            is_valid = True
+            validity_move_info = {"forWhites": "valid", "forBlacks": "invalid"}
+            error_message = {
+                "forWhites": None,
+                "forBlacks": "current move is not permitted",
+            }
+        elif (
+            dest_field.upper() not in whites_moves
+            and dest_field.upper() not in blacks_moves
+        ):
+            is_valid = False
+            validity_move_info = {"forWhites": "invalid", "forBlacks": "invalid"}
+            error_message = {
+                "forWhites": "current move is not permitted",
+                "forBlacks": "current move is not permitted",
+            }
+
+        return is_valid, validity_move_info, error_message
 
 
 class Queen(Figure):
@@ -302,5 +350,3 @@ class Rook(Figure):
                 raise ValueError("destination field does not exist")
         else:
             raise ValueError("current field does not exist")
-
-
