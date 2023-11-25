@@ -34,8 +34,8 @@ class Queen(Figure):
     def validate_move(self, dest_field: str) -> str:
         if self.chessboard.check_if_field_in_chessboard(dest_field):
             if dest_field.upper() in self.list_available_moves():
-                return "Field available"
+                return "valid"
             else:
-                return "Field not available."
+                return "invalid"
         else:
-            return "Field does not exists."
+            return "field does not exists."
