@@ -12,8 +12,3 @@ class Figure(ABC):
     @abstractmethod
     def validate_move(self, dest_field: str) -> bool:
         pass
-
-
-
-
-

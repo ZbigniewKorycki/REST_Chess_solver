@@ -49,35 +49,51 @@ class Chessboard:
 
     @staticmethod
     def get_field_from_column_and_row(column: str, row: int) -> str:
-        return ''.join([column, str(row)])
+        return "".join([column, str(row)])
 
     @staticmethod
-    def get_field_after_moving_diagonally_up_left(current_field: str, movement_by: int) -> str:
-        current_column, current_row = Chessboard.get_column_and_row_from_field(current_field)
+    def get_field_after_moving_diagonally_up_left(
+        current_field: str, movement_by: int
+    ) -> str:
+        current_column, current_row = Chessboard.get_column_and_row_from_field(
+            current_field
+        )
         new_column = Chessboard.increment_column(current_column, movement_by)
         new_row = Chessboard.decrement_row(current_row, movement_by)
         new_field = Chessboard.get_field_from_column_and_row(new_column, new_row)
         return new_field
 
     @staticmethod
-    def get_field_after_moving_diagonally_up_right(current_field: str, movement_by: int) -> str:
-        current_column, current_row = Chessboard.get_column_and_row_from_field(current_field)
+    def get_field_after_moving_diagonally_up_right(
+        current_field: str, movement_by: int
+    ) -> str:
+        current_column, current_row = Chessboard.get_column_and_row_from_field(
+            current_field
+        )
         new_column = Chessboard.increment_column(current_column, movement_by)
         new_row = Chessboard.increment_row(current_row, movement_by)
         new_field = Chessboard.get_field_from_column_and_row(new_column, new_row)
         return new_field
 
     @staticmethod
-    def get_field_after_moving_diagonally_down_left(current_field: str, movement_by: int) -> str:
-        current_column, current_row = Chessboard.get_column_and_row_from_field(current_field)
+    def get_field_after_moving_diagonally_down_left(
+        current_field: str, movement_by: int
+    ) -> str:
+        current_column, current_row = Chessboard.get_column_and_row_from_field(
+            current_field
+        )
         new_column = Chessboard.decrement_column(current_column, movement_by)
         new_row = Chessboard.decrement_row(current_row, movement_by)
         new_field = Chessboard.get_field_from_column_and_row(new_column, new_row)
         return new_field
 
     @staticmethod
-    def get_field_after_moving_diagonally_down_right(current_field: str, movement_by: int) -> str:
-        current_column, current_row = Chessboard.get_column_and_row_from_field(current_field)
+    def get_field_after_moving_diagonally_down_right(
+        current_field: str, movement_by: int
+    ) -> str:
+        current_column, current_row = Chessboard.get_column_and_row_from_field(
+            current_field
+        )
         new_column = Chessboard.decrement_column(current_column, movement_by)
         new_row = Chessboard.increment_row(current_row, movement_by)
         new_field = Chessboard.get_field_from_column_and_row(new_column, new_row)
@@ -85,29 +101,36 @@ class Chessboard:
 
     @staticmethod
     def get_field_after_moving_up(current_field: str, movement_by: int) -> str:
-        current_column, current_row = Chessboard.get_column_and_row_from_field(current_field)
+        current_column, current_row = Chessboard.get_column_and_row_from_field(
+            current_field
+        )
         new_row = Chessboard.increment_row(current_row, movement_by)
         new_field = Chessboard.get_field_from_column_and_row(current_column, new_row)
         return new_field
 
     @staticmethod
     def get_field_after_moving_down(current_field: str, movement_by: int) -> str:
-        current_column, current_row = Chessboard.get_column_and_row_from_field(current_field)
+        current_column, current_row = Chessboard.get_column_and_row_from_field(
+            current_field
+        )
         new_row = Chessboard.decrement_row(current_row, movement_by)
         new_field = Chessboard.get_field_from_column_and_row(current_column, new_row)
         return new_field
 
     @staticmethod
     def get_field_after_moving_left(current_field: str, movement_by: int) -> str:
-        current_column, current_row = Chessboard.get_column_and_row_from_field(current_field)
+        current_column, current_row = Chessboard.get_column_and_row_from_field(
+            current_field
+        )
         new_column = Chessboard.decrement_column(current_column, movement_by)
         new_field = Chessboard.get_field_from_column_and_row(new_column, current_row)
         return new_field
 
     @staticmethod
     def get_field_after_moving_right(current_field: str, movement_by: int) -> str:
-        current_column, current_row = Chessboard.get_column_and_row_from_field(current_field)
+        current_column, current_row = Chessboard.get_column_and_row_from_field(
+            current_field
+        )
         new_column = Chessboard.increment_column(current_column, movement_by)
         new_field = Chessboard.get_field_from_column_and_row(new_column, current_row)
         return new_field
-
