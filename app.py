@@ -4,93 +4,63 @@ from figures import Bishop, King, Knight, Pawn, Queen, Rook
 app = Flask(__name__)
 
 
-@app.route("/api/v1/<chess_figure>/<current_field>", methods=["GET"])
-def get_list_available_moves(chess_figure, current_field):
-    if chess_figure.lower() == "bishop":
-        bishop = Bishop(current_field)
-        available_moves = bishop.list_available_moves()
-        if available_moves:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": None,
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                200,
-            )
-        else:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": "field does not exist",
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                409,
-            )
+def get_figure_response(figure: str, current_field: str, available_moves: list):
+    if available_moves:
+        return (
+            jsonify(
+                {
+                    "availableMoves": available_moves,
+                    "error": None,
+                    "figure": figure,
+                    "currentField": current_field,
+                }
+            ),
+            200,
+        )
+    else:
+        return (
+            jsonify(
+                {
+                    "availableMoves": [],
+                    "error": "field does not exist",
+                    "figure": figure,
+                    "currentField": current_field,
+                }
+            ),
+            409,
+        )
 
-    if chess_figure.lower() == "king":
-        king = King(current_field)
-        available_moves = king.list_available_moves()
-        if available_moves:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": None,
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                200,
-            )
-        else:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": "field does not exist",
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                409,
-            )
-    if chess_figure.lower() == "knight":
-        knight = Knight(current_field)
-        available_moves = knight.list_available_moves()
-        if available_moves:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": None,
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                200,
-            )
-        else:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": "field does not exist",
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                409,
-            )
+
+@app.route("/api/v1/<chess_figure>/<current_field>", methods=["GET"])
+def get_list_available_moves(chess_figure: str, current_field: str):
+    figure_classes = {
+        "bishop": Bishop,
+        "king": King,
+        "knight": Knight,
+        "pawn": Pawn,
+        "queen": Queen,
+        "rook": Rook,
+    }
+
+    figure_class = figure_classes.get(chess_figure.lower())
+    if not figure_class:
+        return (
+            jsonify(
+                {
+                    "availableMoves": [],
+                    "error": "invalid figure",
+                    "figure": chess_figure,
+                    "currentField": current_field,
+                }
+            ),
+            404,
+        )
+
+    figure_instance = figure_class(current_field)
+
     if chess_figure.lower() == "pawn":
-        pawn = Pawn(current_field)
-        if not pawn.list_available_moves():
+        available_moves = figure_instance.list_available_moves()
+        if not available_moves:
             return (
                 jsonify(
                     {
@@ -103,47 +73,34 @@ def get_list_available_moves(chess_figure, current_field):
                 409,
             )
         try:
-            pawn.list_available_moves()[0]["whites"]
+            whites_moves = available_moves[0]["whites"]
+            blacks_moves = available_moves[0]["blacks"]
         except KeyError:
-            return jsonify(
-                {
-                    "availableMoves": {
-                        "forWhites": [],
-                        "forBlacks": []
-                    },
-                    "error": {
-                        "forWhites": "invalid field, white pawn can not be on 1 row",
-                        "forBlacks": None,
-                    },
-                    "figure": chess_figure,
-                    "currentField": current_field,
-                }, 409)
-        try:
-            pawn.list_available_moves()[0]["blacks"]
-        except KeyError:
-            return jsonify(
-                {
-                    "availableMoves": {
-                        "forWhites": [],
-                        "forBlacks": []
-                    },
-                    "error": {
-                        "forWhites": None,
-                        "forBlacks": "invalid field, black pawn can not be on 8 row",
-                    },
-                    "figure": chess_figure,
-                    "currentField": current_field,
-                }, 409)
-
+            return (
+                jsonify(
+                    {
+                        "availableMoves": {"forWhites": [], "forBlacks": []},
+                        "error": {
+                            "forWhites": "invalid field"
+                            if "whites" not in available_moves[0]
+                            else None,
+                            "forBlacks": "invalid field"
+                            if "blacks" not in available_moves[0]
+                            else None,
+                        },
+                        "figure": chess_figure,
+                        "currentField": current_field,
+                    }
+                ),
+                409,
+            )
         else:
-            available_moves_for_whites = pawn.list_available_moves()[0]["whites"]
-            available_moves_for_blacks = pawn.list_available_moves()[0]["blacks"]
             return (
                 jsonify(
                     {
                         "availableMoves": {
-                            "forWhites": available_moves_for_whites,
-                            "forBlacks": available_moves_for_blacks,
+                            "forWhites": whites_moves,
+                            "forBlacks": blacks_moves,
                         },
                         "error": None,
                         "figure": chess_figure,
@@ -153,73 +110,9 @@ def get_list_available_moves(chess_figure, current_field):
                 200,
             )
 
-    if chess_figure.lower() == "queen":
-        queen = Queen(current_field)
-        available_moves = queen.list_available_moves()
-        if available_moves:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": None,
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                200,
-            )
-        else:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": "field does not exist",
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                409,
-            )
-
-    if chess_figure.lower() == "rook":
-        rook = Rook(current_field)
-        available_moves = rook.list_available_moves()
-        if available_moves:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": None,
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                200,
-            )
-        else:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": available_moves,
-                        "error": "field does not exist",
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                409,
-            )
     else:
-        return (
-            jsonify(
-                {
-                    "availableMoves": [],
-                    "error": "invalid figure",
-                    "figure": chess_figure,
-                    "currentField": current_field,
-                }
-            ),
-            404,
-        )
+        available_moves = figure_instance.list_available_moves()
+        return get_figure_response(chess_figure, current_field, available_moves)
 
 
 if __name__ == "__main__":
