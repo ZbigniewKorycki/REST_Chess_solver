@@ -92,7 +92,7 @@ def get_list_available_moves(chess_figure: str, current_field: str):
                         "currentField": current_field,
                     }
                 ),
-                409,
+                200,
             )
         else:
             return (
@@ -113,6 +113,11 @@ def get_list_available_moves(chess_figure: str, current_field: str):
     else:
         available_moves = figure_instance.list_available_moves()
         return get_figure_response(chess_figure, current_field, available_moves)
+
+
+@app.errorhandler(500)
+def handle_internal_server_error_500(e):
+    return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
 
 if __name__ == "__main__":
