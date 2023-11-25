@@ -81,10 +81,10 @@ def get_list_available_moves(chess_figure: str, current_field: str):
                     {
                         "availableMoves": {"forWhites": [], "forBlacks": []},
                         "error": {
-                            "forWhites": "invalid field"
+                            "forWhites": "invalid field for figure"
                             if "whites" not in available_moves[0]
                             else None,
-                            "forBlacks": "invalid field"
+                            "forBlacks": "invalid field for figure"
                             if "blacks" not in available_moves[0]
                             else None,
                         },
@@ -142,7 +142,50 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
         )
     figure_instance = figure_class(current_field)
 
-    if chess_figure.lower() == "rook":
+    if chess_figure.lower() == "pawn":
+        try:
+            figure_instance.validate_move(dest_field)
+        except ValueError as e:
+            return (
+                jsonify(
+                    {
+                        "move": "invalid",
+                        "figure": chess_figure,
+                        "error": str(e),
+                        "currentField": current_field,
+                        "destField": dest_field
+                    }
+                ),
+                409)
+        else:
+            is_move_valid, move_info, error_info = figure_instance.validate_move(dest_field)
+            if is_move_valid:
+                return (
+                    jsonify(
+                        {
+                            "move": move_info,
+                            "figure": chess_figure,
+                            "error": error_info,
+                            "currentField": current_field,
+                            "destField": dest_field
+                        }
+                    ),
+                    200,
+                )
+            else:
+                return (
+                    jsonify(
+                        {
+                            "move": move_info,
+                            "figure": chess_figure,
+                            "error": error_info,
+                            "currentField": current_field,
+                            "destField": dest_field
+                        }
+                    ),
+                    200,
+                )
+    else:
         try:
             figure_instance.validate_move(dest_field)
         except ValueError as e:
@@ -184,8 +227,6 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
                 ),
                 200,
             )
-    else:
-        pass
 
 
 @app.errorhandler(500)
