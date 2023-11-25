@@ -7,7 +7,6 @@ class Bishop(Figure):
     def __init__(self, current_field: str):
         super().__init__(current_field)
         self.chessboard = Chessboard()
-        self.available_moves = self.list_available_moves()
 
     def list_available_moves(self) -> list:
         available_moves = []
