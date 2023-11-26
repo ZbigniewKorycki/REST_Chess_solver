@@ -98,3 +98,32 @@ def test_get_list_available_moves_valid_king(client):
     assert "king" in data["figure"]
     assert response.status_code == 200
 
+
+def test_get_list_available_moves_valid_rook(client):
+    response = client.get("/api/v1/rook/h4")
+    data = response.json
+    assert "A4" and "H8" and "H1" and "E4" in data["availableMoves"]
+    assert 14 == len(data["availableMoves"])
+    assert None is data["error"]
+    assert "rook" in data["figure"]
+    assert response.status_code == 200
+
+
+def test_get_list_available_moves_valid_bishop(client):
+    response = client.get("/api/v1/bishop/d6")
+    data = response.json
+    assert "C7" and "E7" and "H2" in data["availableMoves"]
+    assert 11 == len(data["availableMoves"])
+    assert None is data["error"]
+    assert "bishop" in data["figure"]
+    assert response.status_code == 200
+
+
+def test_get_list_available_moves_valid_queen(client):
+    response = client.get("/api/v1/queen/F8")
+    data = response.json
+    assert "H8" and "A8" and "F1" and "F4" in data["availableMoves"]
+    assert 21 == len(data["availableMoves"])
+    assert None is data["error"]
+    assert "queen" in data["figure"]
+    assert response.status_code == 200
