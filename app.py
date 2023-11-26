@@ -1,7 +1,13 @@
 from flask import Flask, jsonify
 from figures import Bishop, King, Knight, Pawn, Queen, Rook
 
-app = Flask(__name__)
+
+def create_app():
+    new_app = Flask(__name__)
+    return new_app
+
+
+app = create_app()
 
 
 def get_chess_figure_class(chess_figure: str):
