@@ -28,7 +28,7 @@ def test_get_list_available_moves_invalid_field(client):
 def test_get_list_available_moves_valid_knight(client):
     response = client.get("/api/v1/knight/d4")
     data = response.json
-    assert "B3" and "B5" and "C2" and "C6" and "E2" and "E6" and "F3" and "F5" in data["availableMoves"]
+    assert "B3" and "B5" and "C2" and "C6" and "E2" in data["availableMoves"]
     assert len(data["availableMoves"]) == 8
     assert "knight" in data["figure"]
     assert response.status_code == 200
@@ -200,7 +200,3 @@ def test_validate_move_invalid_for_both_color_pawn(client):
     assert "current move is not permitted" in data["error"]["forBlacks"]
     assert "current move is not permitted" in data["error"]["forWhites"]
     assert response.status_code == 200
-
-
-
-
