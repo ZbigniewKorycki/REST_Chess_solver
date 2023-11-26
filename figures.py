@@ -5,11 +5,10 @@ from chessboard import Chessboard
 class Bishop(Figure):
     def __init__(self, current_field: str):
         super().__init__(current_field)
-        self.chessboard = Chessboard()
 
     def list_available_moves(self) -> list:
         available_moves = []
-        if self.current_field in self.chessboard.fields:
+        if Chessboard.check_if_field_in_chessboard(self.current_field):
             directions = [
                 Chessboard.get_field_after_moving_diagonally_up_left,
                 Chessboard.get_field_after_moving_diagonally_up_right,
@@ -21,7 +20,7 @@ class Bishop(Figure):
                     possible_field = direction(
                         self.current_field, distance_to_possible_field
                     )
-                    if possible_field in self.chessboard.fields:
+                    if Chessboard.check_if_field_in_chessboard(possible_field):
                         available_moves.append(possible_field)
                     else:
                         break
@@ -30,9 +29,9 @@ class Bishop(Figure):
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
+        if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
-        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+        if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
             raise ValueError("current move is not permitted")
@@ -43,11 +42,10 @@ class Bishop(Figure):
 class King(Figure):
     def __init__(self, current_field: str):
         super().__init__(current_field)
-        self.chessboard = Chessboard()
 
     def list_available_moves(self) -> list:
         available_moves = []
-        if self.current_field in self.chessboard.fields:
+        if Chessboard.check_if_field_in_chessboard(self.current_field):
             directions = [
                 Chessboard.get_field_after_moving_up,
                 Chessboard.get_field_after_moving_down,
@@ -63,16 +61,16 @@ class King(Figure):
                 possible_field = direction(
                     self.current_field, distance_to_possible_field
                 )
-                if possible_field in self.chessboard.fields:
+                if Chessboard.check_if_field_in_chessboard(possible_field):
                     available_moves.append(possible_field)
         else:
             return []
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
+        if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
-        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+        if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
             raise ValueError("current move is not permitted")
@@ -83,11 +81,10 @@ class King(Figure):
 class Knight(Figure):
     def __init__(self, current_field: str):
         super().__init__(current_field)
-        self.chessboard = Chessboard()
 
     def list_available_moves(self) -> list:
         available_moves = []
-        if self.current_field in self.chessboard.fields:
+        if Chessboard.check_if_field_in_chessboard(self.current_field):
             directions_combinations = [
                 [
                     Chessboard.get_field_after_moving_up,
@@ -129,16 +126,16 @@ class Knight(Figure):
                     direction[0](self.current_field, distance_to_intermediate_field),
                     distance_to_possible_field,
                 )
-                if possible_field in self.chessboard.fields:
+                if Chessboard.check_if_field_in_chessboard(possible_field):
                     available_moves.append(possible_field)
         else:
             return []
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
+        if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
-        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+        if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
             raise ValueError("current move is not permitted")
@@ -148,11 +145,10 @@ class Knight(Figure):
 class Pawn(Figure):
     def __init__(self, current_field: str):
         super().__init__(current_field)
-        self.chessboard = Chessboard()
 
     def list_available_moves(self) -> list:
         available_moves = [{"blacks": [], "whites": []}]
-        if self.current_field not in self.chessboard.fields:
+        if not Chessboard.check_if_field_in_chessboard(self.current_field):
             return []
 
         direction_for_whites = Chessboard.get_field_after_moving_up
@@ -166,32 +162,32 @@ class Pawn(Figure):
                 possible_field_for_white = direction_for_whites(
                     self.current_field, distance_to_possible_field_for_whites
                 )
-                if possible_field_for_white in self.chessboard.fields:
+                if Chessboard.check_if_field_in_chessboard(possible_field_for_white):
                     available_moves[0]["whites"].append(possible_field_for_white)
 
             possible_field_for_black = direction_for_blacks(self.current_field, 1)
-            if possible_field_for_black in self.chessboard.fields:
+            if Chessboard.check_if_field_in_chessboard(possible_field_for_black):
                 available_moves[0]["blacks"].append(possible_field_for_black)
 
         if current_row == 7:
             possible_field_for_white = direction_for_whites(self.current_field, 1)
-            if possible_field_for_white in self.chessboard.fields:
+            if Chessboard.check_if_field_in_chessboard(possible_field_for_white):
                 available_moves[0]["whites"].append(possible_field_for_white)
 
             for distance_to_possible_field_for_blacks in [1, 2]:
                 possible_field_for_black = direction_for_blacks(
                     self.current_field, distance_to_possible_field_for_blacks
                 )
-                if possible_field_for_black in self.chessboard.fields:
+                if Chessboard.check_if_field_in_chessboard(possible_field_for_black):
                     available_moves[0]["blacks"].append(possible_field_for_black)
 
         if current_row in range(3, 7):
             possible_field_for_white = direction_for_whites(self.current_field, 1)
-            if possible_field_for_white in self.chessboard.fields:
+            if Chessboard.check_if_field_in_chessboard(possible_field_for_white):
                 available_moves[0]["whites"].append(possible_field_for_white)
 
             possible_field_for_black = direction_for_blacks(self.current_field, 1)
-            if possible_field_for_black in self.chessboard.fields:
+            if Chessboard.check_if_field_in_chessboard(possible_field_for_black):
                 available_moves[0]["blacks"].append(possible_field_for_black)
 
         if current_row == 1:
@@ -201,9 +197,9 @@ class Pawn(Figure):
         return available_moves
 
     def validate_move(self, dest_field: str) -> tuple:
-        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
+        if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
-        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+        if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         available_moves = self.list_available_moves()[0]
         blacks_moves = available_moves.get("blacks", [])
@@ -264,11 +260,10 @@ class Pawn(Figure):
 class Queen(Figure):
     def __init__(self, current_field: str):
         super().__init__(current_field)
-        self.chessboard = Chessboard()
 
     def list_available_moves(self) -> list:
         available_moves = []
-        if self.current_field in self.chessboard.fields:
+        if Chessboard.check_if_field_in_chessboard(self.current_field):
             directions = [
                 Chessboard.get_field_after_moving_up,
                 Chessboard.get_field_after_moving_down,
@@ -284,7 +279,7 @@ class Queen(Figure):
                     possible_field = direction(
                         self.current_field, distance_to_possible_field
                     )
-                    if possible_field in self.chessboard.fields:
+                    if Chessboard.check_if_field_in_chessboard(possible_field):
                         available_moves.append(possible_field)
                     else:
                         break
@@ -293,9 +288,9 @@ class Queen(Figure):
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
+        if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
-        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+        if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
             raise ValueError("current move is not permitted")
@@ -306,11 +301,10 @@ class Queen(Figure):
 class Rook(Figure):
     def __init__(self, current_field: str):
         super().__init__(current_field)
-        self.chessboard = Chessboard()
 
     def list_available_moves(self) -> list:
         available_moves = []
-        if self.current_field in self.chessboard.fields:
+        if Chessboard.check_if_field_in_chessboard(self.current_field):
             directions = [
                 Chessboard.get_field_after_moving_up,
                 Chessboard.get_field_after_moving_down,
@@ -322,7 +316,7 @@ class Rook(Figure):
                     possible_field = direction(
                         self.current_field, distance_to_possible_field
                     )
-                    if possible_field in self.chessboard.fields:
+                    if Chessboard.check_if_field_in_chessboard(possible_field):
                         available_moves.append(possible_field)
                     else:
                         break
@@ -331,9 +325,9 @@ class Rook(Figure):
         return sorted(available_moves)
 
     def validate_move(self, dest_field: str) -> bool:
-        if not self.chessboard.check_if_field_in_chessboard(self.current_field):
+        if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
-        if not self.chessboard.check_if_field_in_chessboard(dest_field):
+        if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
             raise ValueError("current move is not permitted")

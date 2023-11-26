@@ -2,19 +2,14 @@ class Chessboard:
     ROWS = range(1, 9)
     COLUMNS = "ABCDEFGH"
 
-    def __init__(self, rows=ROWS, columns=COLUMNS):
-        self.rows = rows
-        self.columns = columns
-        self.rows_size = len(rows)
-        self.columns_size = len(columns)
-        self.fields = self.get_fields_of_chessboard()
-
-    def get_fields_of_chessboard(self) -> list:
-        fields = [f"{column}{row}" for row in self.rows for column in self.columns]
+    @classmethod
+    def get_fields_of_chessboard(cls) -> list:
+        fields = [f"{column}{row}" for row in cls.ROWS for column in cls.COLUMNS]
         return fields
 
-    def check_if_field_in_chessboard(self, field: str) -> bool:
-        if field.upper() in self.fields:
+    @classmethod
+    def check_if_field_in_chessboard(cls, field: str) -> bool:
+        if field.upper() in cls.get_fields_of_chessboard():
             return True
         else:
             return False
