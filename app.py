@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response
 from figures import Bishop, King, Knight, Pawn, Queen, Rook
 
 
@@ -111,7 +111,7 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
                     "error": "invalid figure",
                     "figure": chess_figure,
                     "currentField": current_field,
-                    "destField": dest_field
+                    "destField": dest_field,
                 }
             ),
             404,
@@ -197,5 +197,10 @@ def handle_internal_server_error_500(e):
     return jsonify({"error": "Internal Server Error", "message": str(e)}), 500
 
 
+@app.errorhandler(404)
+def handle_not_found_error_404(error):
+    return make_response(jsonify({"error": "Not found"}), 404)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
