@@ -4,8 +4,7 @@ from figures import Bishop, King, Knight, Pawn, Queen, Rook
 app = Flask(__name__)
 
 
-@app.route("/api/v1/<chess_figure>/<current_field>", methods=["GET"])
-def get_list_available_moves(chess_figure: str, current_field: str):
+def get_chess_figure_class(chess_figure: str):
     figure_classes = {
         "bishop": Bishop,
         "king": King,
@@ -16,6 +15,13 @@ def get_list_available_moves(chess_figure: str, current_field: str):
     }
 
     figure_class = figure_classes.get(chess_figure.lower())
+    if figure_class:
+        return figure_class
+
+
+@app.route("/api/v1/<chess_figure>/<current_field>", methods=["GET"])
+def get_list_available_moves(chess_figure: str, current_field: str):
+    figure_class = get_chess_figure_class(chess_figure)
     if not figure_class:
         return (
             jsonify(
@@ -86,29 +92,20 @@ def get_list_available_moves(chess_figure: str, current_field: str):
 
 @app.route("/api/v1/<chess_figure>/<current_field>/<dest_field>", methods=["GET"])
 def validate_move(chess_figure: str, current_field: str, dest_field: str):
-    figure_classes = {
-        "bishop": Bishop,
-        "king": King,
-        "knight": Knight,
-        "pawn": Pawn,
-        "queen": Queen,
-        "rook": Rook,
-    }
-
-    figure_class = figure_classes.get(chess_figure.lower())
+    figure_class = get_chess_figure_class(chess_figure)
     if not figure_class:
         return (
             jsonify(
                 {
-                    "move": "invalid",
-                    "figure": chess_figure,
+                    "availableMoves": [],
                     "error": "invalid figure",
+                    "figure": chess_figure,
                     "currentField": current_field,
-                    "destField": dest_field,
                 }
             ),
             404,
         )
+
     figure_instance = figure_class(current_field)
 
     try:
@@ -128,13 +125,35 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
         )
 
     if chess_figure.lower() == "pawn":
-        is_move_valid, move_info, error_info = figure_instance.validate_move(dest_field)
+        is_move_valid_for_color = figure_instance.validate_move(dest_field)
         return (
             jsonify(
                 {
-                    "move": move_info,
+                    "move": {
+                        "forWhites": "valid"
+                        if is_move_valid_for_color.white
+                        else "invalid",
+                        "forBlacks": "valid"
+                        if is_move_valid_for_color.black
+                        else "invalid",
+                    },
                     "figure": chess_figure,
-                    "error": error_info,
+                    "error": {
+                        "forWhites": None
+                        if is_move_valid_for_color.white
+                        else (
+                            "invalid position for figure"
+                            if is_move_valid_for_color.white is None
+                            else "current move is not permitted"
+                        ),
+                        "forBlacks": None
+                        if is_move_valid_for_color.black
+                        else (
+                            "invalid position for figure"
+                            if is_move_valid_for_color.black is None
+                            else "current move is not permitted"
+                        ),
+                    },
                     "currentField": current_field,
                     "destField": dest_field,
                 }

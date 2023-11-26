@@ -6,9 +6,9 @@ class Figure(ABC):
         self.current_field = current_field.upper()
 
     @abstractmethod
-    def list_available_moves(self):
+    def list_available_moves(self) -> list:
         pass
 
     @abstractmethod
-    def validate_move(self, dest_field: str) -> bool:
+    def validate_move(self, dest_field: str):
         pass

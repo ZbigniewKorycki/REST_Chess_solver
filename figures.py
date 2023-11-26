@@ -1,5 +1,6 @@
 from figure import Figure
 from chessboard import Chessboard
+from collections import namedtuple
 
 
 class Bishop(Figure):
@@ -58,9 +59,7 @@ class King(Figure):
         ]
         for direction in directions:
             distance_to_possible_field = 1
-            possible_field = direction(
-                self.current_field, distance_to_possible_field
-            )
+            possible_field = direction(self.current_field, distance_to_possible_field)
             if Chessboard.check_if_field_in_chessboard(possible_field):
                 available_moves.append(possible_field)
         return sorted(available_moves)
@@ -193,66 +192,33 @@ class Pawn(Figure):
             return [{"whites": [], "blacks": None}]
         return available_moves
 
-    def validate_move(self, dest_field: str) -> tuple:
+    def validate_move(self, dest_field: str):
+        dest_field = dest_field.upper()
         if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
         if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
 
         available_moves = self.list_available_moves()[0]
-        blacks_moves = available_moves["blacks"]
         whites_moves = available_moves["whites"]
+        blacks_moves = available_moves["blacks"]
 
-        is_valid = False
-        validity_move_info = {"forWhites": "", "forBlacks": ""}
-        error_message = {"forWhites": None, "forBlacks": None}
+        is_move_valid_for_color = namedtuple("valid_move_for_color", ["white", "black"])
 
         if blacks_moves is None:
-            is_valid = False
-            validity_move_info = {"forWhites": "invalid", "forBlacks": "invalid"}
-            error_message = {
-                "forWhites": "end of chessboard",
-                "forBlacks": "invalid starting position",
-            }
-        elif whites_moves is None:
-            is_valid = False
-            validity_move_info = {"forWhites": "invalid", "forBlacks": "invalid"}
-            error_message = {
-                "forWhites": "invalid starting position",
-                "forBlacks": "end of chessboard",
-            }
-        elif (
-            dest_field.upper() in blacks_moves
-            and dest_field.upper() not in whites_moves
-        ):
-            is_valid = True
-            validity_move_info = {"forWhites": "invalid", "forBlacks": "valid"}
-            error_message = {
-                "forWhites": "current move is not permitted",
-                "forBlacks": None,
-            }
-        elif (
-            dest_field.upper() in whites_moves
-            and dest_field.upper() not in blacks_moves
-        ):
-            is_valid = True
-            validity_move_info = {"forWhites": "valid", "forBlacks": "invalid"}
-            error_message = {
-                "forWhites": None,
-                "forBlacks": "current move is not permitted",
-            }
-        elif (
-            dest_field.upper() not in whites_moves
-            and dest_field.upper() not in blacks_moves
-        ):
-            is_valid = False
-            validity_move_info = {"forWhites": "invalid", "forBlacks": "invalid"}
-            error_message = {
-                "forWhites": "current move is not permitted",
-                "forBlacks": "current move is not permitted",
-            }
+            return is_move_valid_for_color(False, None)
 
-        return is_valid, validity_move_info, error_message
+        elif whites_moves is None:
+            return is_move_valid_for_color(None, False)
+
+        elif dest_field not in whites_moves and dest_field in blacks_moves:
+            return is_move_valid_for_color(False, True)
+
+        elif dest_field in whites_moves and dest_field not in blacks_moves:
+            return is_move_valid_for_color(True, False)
+
+        else:
+            return is_move_valid_for_color(False, False)
 
 
 class Queen(Figure):
