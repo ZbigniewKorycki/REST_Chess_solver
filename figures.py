@@ -13,10 +13,10 @@ class Bishop(Figure):
             raise ValueError("current field does not exist")
         available_moves = []
         directions = [
-            Chessboard.get_field_after_moving_diagonally_up_left,
-            Chessboard.get_field_after_moving_diagonally_up_right,
-            Chessboard.get_field_after_moving_diagonally_down_left,
-            Chessboard.get_field_after_moving_diagonally_down_right,
+            Chessboard.get_field_after_move_up_left,
+            Chessboard.get_field_after_move_up_right,
+            Chessboard.get_field_after_move_down_left,
+            Chessboard.get_field_after_move_down_right,
         ]
         for direction in directions:
             for distance_to_possible_field in range(1, 8):
@@ -49,14 +49,14 @@ class King(Figure):
             raise ValueError("current field does not exist")
         available_moves = []
         directions = [
-            Chessboard.get_field_after_moving_up,
-            Chessboard.get_field_after_moving_down,
-            Chessboard.get_field_after_moving_left,
-            Chessboard.get_field_after_moving_right,
-            Chessboard.get_field_after_moving_diagonally_up_left,
-            Chessboard.get_field_after_moving_diagonally_up_right,
-            Chessboard.get_field_after_moving_diagonally_down_left,
-            Chessboard.get_field_after_moving_diagonally_down_right,
+            Chessboard.get_field_after_move_up,
+            Chessboard.get_field_after_move_down,
+            Chessboard.get_field_after_move_left,
+            Chessboard.get_field_after_move_right,
+            Chessboard.get_field_after_move_up_left,
+            Chessboard.get_field_after_move_up_right,
+            Chessboard.get_field_after_move_down_left,
+            Chessboard.get_field_after_move_down_right,
         ]
         for direction in directions:
             dist_to_poss_field = 1
@@ -86,36 +86,36 @@ class Knight(Figure):
         available_moves = []
         directions_combinations = [
             [
-                Chessboard.get_field_after_moving_up,
-                Chessboard.get_field_after_moving_right,
+                Chessboard.get_field_after_move_up,
+                Chessboard.get_field_after_move_right,
             ],
             [
-                Chessboard.get_field_after_moving_up,
-                Chessboard.get_field_after_moving_left,
+                Chessboard.get_field_after_move_up,
+                Chessboard.get_field_after_move_left,
             ],
             [
-                Chessboard.get_field_after_moving_down,
-                Chessboard.get_field_after_moving_right,
+                Chessboard.get_field_after_move_down,
+                Chessboard.get_field_after_move_right,
             ],
             [
-                Chessboard.get_field_after_moving_down,
-                Chessboard.get_field_after_moving_left,
+                Chessboard.get_field_after_move_down,
+                Chessboard.get_field_after_move_left,
             ],
             [
-                Chessboard.get_field_after_moving_left,
-                Chessboard.get_field_after_moving_up,
+                Chessboard.get_field_after_move_left,
+                Chessboard.get_field_after_move_up,
             ],
             [
-                Chessboard.get_field_after_moving_left,
-                Chessboard.get_field_after_moving_down,
+                Chessboard.get_field_after_move_left,
+                Chessboard.get_field_after_move_down,
             ],
             [
-                Chessboard.get_field_after_moving_right,
-                Chessboard.get_field_after_moving_up,
+                Chessboard.get_field_after_move_right,
+                Chessboard.get_field_after_move_up,
             ],
             [
-                Chessboard.get_field_after_moving_right,
-                Chessboard.get_field_after_moving_down,
+                Chessboard.get_field_after_move_right,
+                Chessboard.get_field_after_move_down,
             ],
         ]
         for direction in directions_combinations:
@@ -150,9 +150,9 @@ class Pawn(Figure):
         if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
         available_moves = [{"blacks": [], "whites": []}]
-        direction_for_whites = Chessboard.get_field_after_moving_up
-        direction_for_blacks = Chessboard.get_field_after_moving_down
-        current_column, current_row = Chessboard.get_column_and_row_from_field(
+        direction_for_whites = Chessboard.get_field_after_move_up
+        direction_for_blacks = Chessboard.get_field_after_move_down
+        current_column, current_row = Chessboard.get_col_and_row_from_field(
             self.current_field
         )
 
@@ -229,14 +229,14 @@ class Queen(Figure):
             raise ValueError("current field does not exist")
         available_moves = []
         directions = [
-            Chessboard.get_field_after_moving_up,
-            Chessboard.get_field_after_moving_down,
-            Chessboard.get_field_after_moving_left,
-            Chessboard.get_field_after_moving_right,
-            Chessboard.get_field_after_moving_diagonally_up_left,
-            Chessboard.get_field_after_moving_diagonally_up_right,
-            Chessboard.get_field_after_moving_diagonally_down_left,
-            Chessboard.get_field_after_moving_diagonally_down_right,
+            Chessboard.get_field_after_move_up,
+            Chessboard.get_field_after_move_down,
+            Chessboard.get_field_after_move_left,
+            Chessboard.get_field_after_move_right,
+            Chessboard.get_field_after_move_up_left,
+            Chessboard.get_field_after_move_up_right,
+            Chessboard.get_field_after_move_down_left,
+            Chessboard.get_field_after_move_down_right,
         ]
         for direction in directions:
             for distance_to_possible_field in range(1, 8):
@@ -269,10 +269,10 @@ class Rook(Figure):
             raise ValueError("current field does not exist")
         available_moves = []
         directions = [
-            Chessboard.get_field_after_moving_up,
-            Chessboard.get_field_after_moving_down,
-            Chessboard.get_field_after_moving_left,
-            Chessboard.get_field_after_moving_right,
+            Chessboard.get_field_after_move_up,
+            Chessboard.get_field_after_move_down,
+            Chessboard.get_field_after_move_left,
+            Chessboard.get_field_after_move_right,
         ]
         for direction in directions:
             for distance_to_possible_field in range(1, 8):
