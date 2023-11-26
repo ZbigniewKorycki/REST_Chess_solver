@@ -127,3 +127,12 @@ def test_get_list_available_moves_valid_queen(client):
     assert None is data["error"]
     assert "queen" in data["figure"]
     assert response.status_code == 200
+
+
+def test_validate_move_invalid_figure(client):
+    response = client.get("/api/v1/non_existing_figure/a4/b5")
+    data = response.json
+    assert "invalid figure" in data["error"]
+    assert "invalid" == data["move"]
+    assert response.status_code == 404
+

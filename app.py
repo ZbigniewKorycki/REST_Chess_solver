@@ -107,10 +107,11 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
         return (
             jsonify(
                 {
-                    "availableMoves": [],
+                    "move": "invalid",
                     "error": "invalid figure",
                     "figure": chess_figure,
                     "currentField": current_field,
+                    "destField": dest_field
                 }
             ),
             404,
