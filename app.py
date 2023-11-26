@@ -156,14 +156,14 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
                             "forWhites": None
                             if is_move_valid_for_whites
                             else (
-                                "invalid position for figure"
+                                "invalid field for figure"
                                 if is_move_valid_for_whites is None
                                 else "current move is not permitted"
                             ),
                             "forBlacks": None
                             if is_move_valid_for_blacks
                             else (
-                                "invalid position for figure"
+                                "invalid field for figure"
                                 if is_move_valid_for_blacks is None
                                 else "current move is not permitted"
                             ),
