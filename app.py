@@ -4,33 +4,6 @@ from figures import Bishop, King, Knight, Pawn, Queen, Rook
 app = Flask(__name__)
 
 
-def get_figure_response(figure: str, current_field: str, available_moves: list):
-    if available_moves:
-        return (
-            jsonify(
-                {
-                    "availableMoves": available_moves,
-                    "error": None,
-                    "figure": figure,
-                    "currentField": current_field,
-                }
-            ),
-            200,
-        )
-    else:
-        return (
-            jsonify(
-                {
-                    "availableMoves": [],
-                    "error": "field does not exist",
-                    "figure": figure,
-                    "currentField": current_field,
-                }
-            ),
-            409,
-        )
-
-
 @app.route("/api/v1/<chess_figure>/<current_field>", methods=["GET"])
 def get_list_available_moves(chess_figure: str, current_field: str):
     figure_classes = {
@@ -58,20 +31,23 @@ def get_list_available_moves(chess_figure: str, current_field: str):
 
     figure_instance = figure_class(current_field)
 
+    try:
+        figure_instance.list_available_moves()
+    except ValueError as e:
+        return (
+            jsonify(
+                {
+                    "availableMoves": [],
+                    "error": str(e),
+                    "figure": chess_figure,
+                    "currentField": current_field,
+                }
+            ),
+            409,
+        )
+
     if chess_figure.lower() == "pawn":
         available_moves = figure_instance.list_available_moves()
-        if not available_moves:
-            return (
-                jsonify(
-                    {
-                        "availableMoves": [],
-                        "error": "field does not exist",
-                        "figure": chess_figure,
-                        "currentField": current_field,
-                    }
-                ),
-                409,
-            )
         try:
             whites_moves = available_moves[0]["whites"]
             blacks_moves = available_moves[0]["blacks"]
@@ -112,7 +88,17 @@ def get_list_available_moves(chess_figure: str, current_field: str):
 
     else:
         available_moves = figure_instance.list_available_moves()
-        return get_figure_response(chess_figure, current_field, available_moves)
+        return (
+            jsonify(
+                {
+                    "availableMoves": available_moves,
+                    "error": None,
+                    "figure": chess_figure,
+                    "currentField": current_field,
+                }
+            ),
+            200,
+        )
 
 
 @app.route("/api/v1/<chess_figure>/<current_field>/<dest_field>", methods=["GET"])
@@ -159,35 +145,22 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
                 409,
             )
         else:
-            is_move_valid, move_info, error_info = figure_instance.validate_move(
+            is_valid, move_info, error_info = figure_instance.validate_move(
                 dest_field
             )
-            if is_move_valid:
-                return (
-                    jsonify(
-                        {
-                            "move": move_info,
-                            "figure": chess_figure,
-                            "error": error_info,
-                            "currentField": current_field,
-                            "destField": dest_field,
-                        }
-                    ),
-                    200,
-                )
-            else:
-                return (
-                    jsonify(
-                        {
-                            "move": move_info,
-                            "figure": chess_figure,
-                            "error": error_info,
-                            "currentField": current_field,
-                            "destField": dest_field,
-                        }
-                    ),
-                    200,
-                )
+            return (
+                jsonify(
+                    {
+                        "move": move_info,
+                        "figure": chess_figure,
+                        "error": error_info,
+                        "currentField": current_field,
+                        "destField": dest_field,
+                    }
+                ),
+                200,
+            )
+
     else:
         try:
             is_valid = figure_instance.validate_move(dest_field)
