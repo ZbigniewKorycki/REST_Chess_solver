@@ -188,9 +188,9 @@ class Pawn(Figure):
                 available_moves[0]["blacks"].append(possible_field_for_black)
 
         if current_row == 1:
-            return [{"blacks": []}]
+            return [{"whites": None, "blacks": []}]
         if current_row == 8:
-            return [{"whites": []}]
+            return [{"whites": [], "blacks": None}]
         return available_moves
 
     def validate_move(self, dest_field: str) -> tuple:
@@ -198,22 +198,23 @@ class Pawn(Figure):
             raise ValueError("current field does not exist")
         if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
+
         available_moves = self.list_available_moves()[0]
-        blacks_moves = available_moves.get("blacks", [])
-        whites_moves = available_moves.get("whites", [])
+        blacks_moves = available_moves["blacks"]
+        whites_moves = available_moves["whites"]
 
         is_valid = False
         validity_move_info = {"forWhites": "", "forBlacks": ""}
         error_message = {"forWhites": None, "forBlacks": None}
 
-        if "blacks" not in available_moves:
+        if blacks_moves is None:
             is_valid = False
             validity_move_info = {"forWhites": "invalid", "forBlacks": "invalid"}
             error_message = {
                 "forWhites": "end of chessboard",
                 "forBlacks": "invalid starting position",
             }
-        elif "whites" not in available_moves:
+        elif whites_moves is None:
             is_valid = False
             validity_move_info = {"forWhites": "invalid", "forBlacks": "invalid"}
             error_message = {
