@@ -38,7 +38,7 @@ def get_list_available_moves(chess_figure: str, current_field: str):
     figure_instance = figure_class(current_field)
 
     try:
-        figure_instance.list_available_moves()
+        available_moves = figure_instance.list_available_moves()
     except ValueError as e:
         return (
             jsonify(
@@ -51,43 +51,47 @@ def get_list_available_moves(chess_figure: str, current_field: str):
             ),
             409,
         )
-    available_moves = figure_instance.list_available_moves()
-    if chess_figure.lower() == "pawn":
-        whites_moves = available_moves[0]["whites"]
-        blacks_moves = available_moves[0]["blacks"]
-        return (
-            jsonify(
-                {
-                    "availableMoves": {
-                        "forWhites": whites_moves if whites_moves is not None else [],
-                        "forBlacks": blacks_moves if blacks_moves is not None else [],
-                    },
-                    "error": {
-                        "forWhites": "invalid field for figure"
-                        if whites_moves is None
-                        else None,
-                        "forBlacks": "invalid field for figure"
-                        if blacks_moves is None
-                        else None,
-                    },
-                    "figure": chess_figure,
-                    "currentField": current_field,
-                }
-            ),
-            200,
-        )
     else:
-        return (
-            jsonify(
-                {
-                    "availableMoves": available_moves,
-                    "error": None,
-                    "figure": chess_figure,
-                    "currentField": current_field,
-                }
-            ),
-            200,
-        )
+        if chess_figure.lower() == "pawn":
+            whites_moves = available_moves[0]["whites"]
+            blacks_moves = available_moves[0]["blacks"]
+            return (
+                jsonify(
+                    {
+                        "availableMoves": {
+                            "forWhites": whites_moves
+                            if whites_moves is not None
+                            else [],
+                            "forBlacks": blacks_moves
+                            if blacks_moves is not None
+                            else [],
+                        },
+                        "error": {
+                            "forWhites": "invalid field for figure"
+                            if whites_moves is None
+                            else None,
+                            "forBlacks": "invalid field for figure"
+                            if blacks_moves is None
+                            else None,
+                        },
+                        "figure": chess_figure,
+                        "currentField": current_field,
+                    }
+                ),
+                200,
+            )
+        else:
+            return (
+                jsonify(
+                    {
+                        "availableMoves": available_moves,
+                        "error": None,
+                        "figure": chess_figure,
+                        "currentField": current_field,
+                    }
+                ),
+                200,
+            )
 
 
 @app.route("/api/v1/<chess_figure>/<current_field>/<dest_field>", methods=["GET"])
@@ -109,7 +113,7 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
     figure_instance = figure_class(current_field)
 
     try:
-        figure_instance.validate_move(dest_field)
+        is_move_valid = figure_instance.validate_move(dest_field)
     except ValueError as e:
         return (
             jsonify(
@@ -123,58 +127,62 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
             ),
             409,
         )
-
-    if chess_figure.lower() == "pawn":
-        is_move_valid_for_color = figure_instance.validate_move(dest_field)
-        return (
-            jsonify(
-                {
-                    "move": {
-                        "forWhites": "valid"
-                        if is_move_valid_for_color.white
-                        else "invalid",
-                        "forBlacks": "valid"
-                        if is_move_valid_for_color.black
-                        else "invalid",
-                    },
-                    "figure": chess_figure,
-                    "error": {
-                        "forWhites": None
-                        if is_move_valid_for_color.white
-                        else (
-                            "invalid position for figure"
-                            if is_move_valid_for_color.white is None
-                            else "current move is not permitted"
-                        ),
-                        "forBlacks": None
-                        if is_move_valid_for_color.black
-                        else (
-                            "invalid position for figure"
-                            if is_move_valid_for_color.black is None
-                            else "current move is not permitted"
-                        ),
-                    },
-                    "currentField": current_field,
-                    "destField": dest_field,
-                }
-            ),
-            200,
-        )
-
     else:
-        is_move_valid = figure_instance.validate_move(dest_field)
-        return (
-            jsonify(
-                {
-                    "move": "valid" if is_move_valid else "invalid",
-                    "figure": chess_figure,
-                    "error": None if is_move_valid else "current move is not permitted",
-                    "currentField": current_field,
-                    "destField": dest_field,
-                }
-            ),
-            200,
-        )
+        if chess_figure.lower() == "pawn":
+            (
+                is_move_valid_for_whites,
+                is_move_valid_for_blacks,
+            ) = figure_instance.validate_move(dest_field)
+            return (
+                jsonify(
+                    {
+                        "move": {
+                            "forWhites": "valid"
+                            if is_move_valid_for_whites
+                            else "invalid",
+                            "forBlacks": "valid"
+                            if is_move_valid_for_blacks
+                            else "invalid",
+                        },
+                        "figure": chess_figure,
+                        "error": {
+                            "forWhites": None
+                            if is_move_valid_for_whites
+                            else (
+                                "invalid position for figure"
+                                if is_move_valid_for_whites is None
+                                else "current move is not permitted"
+                            ),
+                            "forBlacks": None
+                            if is_move_valid_for_blacks
+                            else (
+                                "invalid position for figure"
+                                if is_move_valid_for_blacks is None
+                                else "current move is not permitted"
+                            ),
+                        },
+                        "currentField": current_field,
+                        "destField": dest_field,
+                    }
+                ),
+                200,
+            )
+
+        else:
+            return (
+                jsonify(
+                    {
+                        "move": "valid" if is_move_valid else "invalid",
+                        "figure": chess_figure,
+                        "error": None
+                        if is_move_valid
+                        else "current move is not permitted",
+                        "currentField": current_field,
+                        "destField": dest_field,
+                    }
+                ),
+                200,
+            )
 
 
 @app.errorhandler(500)

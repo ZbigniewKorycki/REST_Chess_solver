@@ -1,6 +1,7 @@
 from figure import Figure
 from chessboard import Chessboard
 from collections import namedtuple
+from typing import Optional, Tuple
 
 
 class Bishop(Figure):
@@ -196,7 +197,7 @@ class Pawn(Figure):
             return [{"whites": [], "blacks": None}]
         return available_moves
 
-    def validate_move(self, dest_field: str):
+    def validate_move(self, dest_field: str) -> Tuple[Optional[bool], Optional[bool]]:
         if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
         if not Chessboard.check_if_field_in_chessboard(dest_field):
