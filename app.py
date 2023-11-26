@@ -135,7 +135,7 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
                     "figure": chess_figure,
                     "error": "invalid figure",
                     "currentField": current_field,
-                    "destField": dest_field
+                    "destField": dest_field,
                 }
             ),
             404,
@@ -153,12 +153,15 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
                         "figure": chess_figure,
                         "error": str(e),
                         "currentField": current_field,
-                        "destField": dest_field
+                        "destField": dest_field,
                     }
                 ),
-                409)
+                409,
+            )
         else:
-            is_move_valid, move_info, error_info = figure_instance.validate_move(dest_field)
+            is_move_valid, move_info, error_info = figure_instance.validate_move(
+                dest_field
+            )
             if is_move_valid:
                 return (
                     jsonify(
@@ -167,7 +170,7 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
                             "figure": chess_figure,
                             "error": error_info,
                             "currentField": current_field,
-                            "destField": dest_field
+                            "destField": dest_field,
                         }
                     ),
                     200,
@@ -180,49 +183,36 @@ def validate_move(chess_figure: str, current_field: str, dest_field: str):
                             "figure": chess_figure,
                             "error": error_info,
                             "currentField": current_field,
-                            "destField": dest_field
+                            "destField": dest_field,
                         }
                     ),
                     200,
                 )
     else:
         try:
-            figure_instance.validate_move(dest_field)
+            is_valid = figure_instance.validate_move(dest_field)
         except ValueError as e:
-            if str(e) == "current move is not permitted":
-                return (
-                    jsonify(
-                        {
-                            "move": "invalid",
-                            "figure": chess_figure,
-                            "error": str(e),
-                            "currentField": current_field,
-                            "destField": dest_field
-                        }
-                    ),
-                    200,
-                )
-            else:
-                return (
-                    jsonify(
-                        {
-                            "move": "invalid",
-                            "figure": chess_figure,
-                            "error": str(e),
-                            "currentField": current_field,
-                            "destField": dest_field
-                        }
-                    ),
-                    409)
+            return (
+                jsonify(
+                    {
+                        "move": "invalid",
+                        "figure": chess_figure,
+                        "error": str(e),
+                        "currentField": current_field,
+                        "destField": dest_field,
+                    }
+                ),
+                409,
+            )
         else:
             return (
                 jsonify(
                     {
-                        "move": "valid",
+                        "move": "valid" if is_valid else "invalid",
                         "figure": chess_figure,
-                        "error": None,
+                        "error": None if is_valid else "current move is not permitted",
                         "currentField": current_field,
-                        "destField": dest_field
+                        "destField": dest_field,
                     }
                 ),
                 200,

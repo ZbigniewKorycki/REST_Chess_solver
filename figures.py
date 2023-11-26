@@ -34,7 +34,7 @@ class Bishop(Figure):
         if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
-            raise ValueError("current move is not permitted")
+            return False
         else:
             return True
 
@@ -73,7 +73,7 @@ class King(Figure):
         if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
-            raise ValueError("current move is not permitted")
+            return False
         else:
             return True
 
@@ -138,9 +138,10 @@ class Knight(Figure):
         if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
-            raise ValueError("current move is not permitted")
+            return False
         else:
             return True
+
 
 class Pawn(Figure):
     def __init__(self, current_field: str):
@@ -293,7 +294,7 @@ class Queen(Figure):
         if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
-            raise ValueError("current move is not permitted")
+            return False
         else:
             return True
 
@@ -330,9 +331,6 @@ class Rook(Figure):
         if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
         if not dest_field.upper() in self.list_available_moves():
-            raise ValueError("current move is not permitted")
+            return False
         else:
             return True
-
-
-
