@@ -153,72 +153,68 @@ class Pawn(Figure):
             self.current_field
         )
 
+        def add_to_available_moves(color, field):
+            if Chessboard.check_if_field_in_chessboard(field):
+                available_moves[0][color].append(field)
+
         if current_row == 2:
             for distance_to_possible_field_for_whites in [1, 2]:
-                possible_field_for_white = direction_for_whites(
-                    self.current_field, distance_to_possible_field_for_whites
+                add_to_available_moves(
+                    "whites",
+                    direction_for_whites(
+                        self.current_field, distance_to_possible_field_for_whites
+                    ),
                 )
-                if Chessboard.check_if_field_in_chessboard(possible_field_for_white):
-                    available_moves[0]["whites"].append(possible_field_for_white)
+            add_to_available_moves(
+                "blacks", direction_for_blacks(self.current_field, 1)
+            )
 
-            possible_field_for_black = direction_for_blacks(self.current_field, 1)
-            if Chessboard.check_if_field_in_chessboard(possible_field_for_black):
-                available_moves[0]["blacks"].append(possible_field_for_black)
-
-        if current_row == 7:
-            possible_field_for_white = direction_for_whites(self.current_field, 1)
-            if Chessboard.check_if_field_in_chessboard(possible_field_for_white):
-                available_moves[0]["whites"].append(possible_field_for_white)
+        elif current_row == 7:
+            add_to_available_moves(
+                "whites", direction_for_whites(self.current_field, 1)
+            )
 
             for distance_to_possible_field_for_blacks in [1, 2]:
-                possible_field_for_black = direction_for_blacks(
-                    self.current_field, distance_to_possible_field_for_blacks
+                add_to_available_moves(
+                    "blacks",
+                    direction_for_blacks(
+                        self.current_field, distance_to_possible_field_for_blacks
+                    ),
                 )
-                if Chessboard.check_if_field_in_chessboard(possible_field_for_black):
-                    available_moves[0]["blacks"].append(possible_field_for_black)
 
-        if current_row in range(3, 7):
-            possible_field_for_white = direction_for_whites(self.current_field, 1)
-            if Chessboard.check_if_field_in_chessboard(possible_field_for_white):
-                available_moves[0]["whites"].append(possible_field_for_white)
+        elif 3 <= current_row <= 6:
+            add_to_available_moves(
+                "whites", direction_for_whites(self.current_field, 1)
+            )
+            add_to_available_moves(
+                "blacks", direction_for_blacks(self.current_field, 1)
+            )
 
-            possible_field_for_black = direction_for_blacks(self.current_field, 1)
-            if Chessboard.check_if_field_in_chessboard(possible_field_for_black):
-                available_moves[0]["blacks"].append(possible_field_for_black)
-
-        if current_row == 1:
+        elif current_row == 1:
             return [{"whites": None, "blacks": []}]
-        if current_row == 8:
+        elif current_row == 8:
             return [{"whites": [], "blacks": None}]
         return available_moves
 
     def validate_move(self, dest_field: str):
-        dest_field = dest_field.upper()
         if not Chessboard.check_if_field_in_chessboard(self.current_field):
             raise ValueError("current field does not exist")
         if not Chessboard.check_if_field_in_chessboard(dest_field):
             raise ValueError("destination field does not exist")
 
         available_moves = self.list_available_moves()[0]
-        whites_moves = available_moves["whites"]
-        blacks_moves = available_moves["blacks"]
-
         is_move_valid_for_color = namedtuple("valid_move_for_color", ["white", "black"])
 
-        if blacks_moves is None:
+        if available_moves["blacks"] is None:
             return is_move_valid_for_color(False, None)
 
-        elif whites_moves is None:
+        elif available_moves["whites"] is None:
             return is_move_valid_for_color(None, False)
 
-        elif dest_field not in whites_moves and dest_field in blacks_moves:
-            return is_move_valid_for_color(False, True)
+        dest_field_in_whites = dest_field.upper() in available_moves["whites"]
+        dest_field_in_blacks = dest_field.upper() in available_moves["blacks"]
 
-        elif dest_field in whites_moves and dest_field not in blacks_moves:
-            return is_move_valid_for_color(True, False)
-
-        else:
-            return is_move_valid_for_color(False, False)
+        return is_move_valid_for_color(dest_field_in_whites, dest_field_in_blacks)
 
 
 class Queen(Figure):
